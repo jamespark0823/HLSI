@@ -23,6 +23,9 @@
 //    yMin:  manimum y plot values in dB
 ///
 //
+
+var time = 1000;
+
 function PowerSpectrumPlot(opts = {}) {
 
     if(typeof(opts.yMax) === 'undefined')
@@ -196,6 +199,32 @@ function PowerSpectrumPlot(opts = {}) {
 
     // update_plot() will be called by the callbacks that are set just
     // above.
+
+    var time = 1000;
+    var data = [0.1, 1];
+    var time_slider = d3
+        .sliderBottom()
+        .min(d3.min(data))
+        .max(d3.max(data))
+        .width(300)
+        .ticks(10)
+        .step(0.1)
+        .default(1)
+        .on('onchange', function(d) {
+            clearInterval(t_interval);
+            t_interval = setInterval(draw, d * 1000);
+        });
+        
+    var gSimple = d3
+        .select('div#slider-simple')
+        .append('svg')
+        .attr('width', 500)
+        .attr('height', 100)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+    gSimple.call(time_slider);
+
     var margin = ({top: 50, right: 100, bottom: 40, left: 50})
     var height = 300
     var width = 750
@@ -285,5 +314,5 @@ function PowerSpectrumPlot(opts = {}) {
     }
 
     // draw every second
-    setInterval(draw, 1000);
+    var t_interval = setInterval(draw, time);
 }
