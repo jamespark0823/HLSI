@@ -212,13 +212,13 @@ function PowerSpectrumPlot(opts = {}) {
     // above.
 
     var time = 1000;
-    var data = [0.1, 1];
+    var data = [0.1, 2];
     var time_slider = d3
         .sliderBottom()
         .min(d3.min(data))
         .max(d3.max(data))
         .width(300)
-        .ticks(10)
+        .ticks(20)
         .step(0.1)
         .default(1)
         .on('onchange', function(d) {
