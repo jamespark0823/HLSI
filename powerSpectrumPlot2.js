@@ -27,7 +27,17 @@
 var time = 1000;
 
 function PowerSpectrumPlot(opts = {}) {
-
+    var nfft = 2048;
+    var margin = ({top: 50, right: 100, bottom: 40, left: 50})
+    var height = 300
+    var width = 750
+    var x = d3.scaleLinear()
+      .domain([0, nfft]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
+      .range([margin.left, width - margin.right])
+    const svg = d3.select("body").append("svg")
+        .attr("style","background-color: black")
+        .attr("viewBox", [0, 0, width, height])
+        .property("value", {x:x})
     if(typeof(opts.yMax) === 'undefined')
         opts.yMax = 20;
     if(typeof(opts.yMin) === 'undefined')
@@ -69,7 +79,7 @@ function PowerSpectrumPlot(opts = {}) {
         n = 2 * k * m + 1;
     var bw = 0.2, // bw
         gn = 0.0; // gain
-    var nfft = 2048;
+
 
     var generator = new siggen(nfft);
     generator.m = m;
@@ -126,6 +136,7 @@ function PowerSpectrumPlot(opts = {}) {
 
     // clip paths
     svgf
+        .attr("style","display:none;")
         .append("clipPath")
         .attr("id", "clipf")
         .append("rect")
@@ -225,12 +236,12 @@ function PowerSpectrumPlot(opts = {}) {
 
     gSimple.call(time_slider);
 
-    var margin = ({top: 50, right: 100, bottom: 40, left: 50})
-    var height = 300
-    var width = 750
-    var x = d3.scaleLinear()
-      .domain([0, nfft]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
-      .range([margin.left, width - margin.right])
+    // var margin = ({top: 50, right: 100, bottom: 40, left: 50})
+    // var height = 300
+    // var width = 750
+    // var x = d3.scaleLinear()
+    //   .domain([0, nfft]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
+    //   .range([margin.left, width - margin.right])
     var y = d3.scaleLinear()
       //.domain(d3.extent(dataf.map(x => x['y']))).nice()
       .domain([-60,20])
@@ -257,11 +268,6 @@ function PowerSpectrumPlot(opts = {}) {
     }
 
     const maxlinesgenerated = 20;
-
-    const svg = d3.select("body").append("svg")
-        .attr("style","background-color: black")
-        .attr("viewBox", [0, 0, width, height])
-        .property("value", {x:x})
 
     const line = svg.append("polyline")
         .attr("fill", "none")
