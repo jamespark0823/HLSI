@@ -83,6 +83,8 @@ function PowerSpectrumPlot(opts = {}) {
         .domain([freq_plot_min * scale_freq, freq_plot_max * scale_freq])
         .range([0, plot.width]);
 
+    console.log(freq_plot_min * scale_freq, freq_plot_max * scale_freq);
+    
     // 6. Y scale will use the randomly generate number
     var pScale = d3.scaleLinear().domain([opts.yMin, opts.yMax]).range([plot.height, 0]);
 
@@ -112,7 +114,6 @@ function PowerSpectrumPlot(opts = {}) {
     // signals in "sigs'
     //if(sigs[0].name.length > 0)
     //    labelPrefix = sigs[0].name + " ";
-
     // add labels
     svg_add_labels(
         svgf,
@@ -137,7 +138,7 @@ function PowerSpectrumPlot(opts = {}) {
         .attr("d", linef);
 
     function update_plot() {
-
+        console.log(dataf);
         generator.clear();
         // Iterate through signal array, calc values and pass to generator
         sigs.forEach(function (sig) {
@@ -169,7 +170,7 @@ function PowerSpectrumPlot(opts = {}) {
             // Note: if there was just one noise than n_gn is just that
             // one (noise.gn).
             generator.generate(n_gn);
-        } else 
+        } else
             // else default noise floor is used (-120db, see generator src)
             generator.generate();
 
@@ -195,4 +196,94 @@ function PowerSpectrumPlot(opts = {}) {
 
     // update_plot() will be called by the callbacks that are set just
     // above.
+    var margin = ({top: 50, right: 100, bottom: 40, left: 50})
+    var height = 300
+    var width = 750
+    var x = d3.scaleLinear()
+      .domain([1780, 1820]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
+      .range([margin.left, width - margin.right])
+    var y = d3.scaleLinear()
+      //.domain(d3.extent(dataf.map(x => x['y']))).nice()
+      .domain([-60,20])
+      .range([height - margin.bottom, margin.top])
+    var xAxis = (g, x) => g
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x))
+    var yAxis = (g, y) => g
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y))
+    var polyline = (data,x,y) => data.map((d,i) => x(i) + ',' + y(d)).join(' ') //data.map is not a function
+    var changepos = (line) => {
+      //console.log(line);
+      const displace1 = 5;
+      const displace2 = -5;
+      let arr = line.split(" ");
+      for (let i = 0; i < arr.length; i++) {
+        let nums = arr[i].split(",");
+        nums[0] = parseFloat(nums[0]) + displace1;
+        nums[1] = parseFloat(nums[1]) + displace2;
+        arr[i] = (nums[0] + ',' + nums[1])
+      }
+      return arr.join(' ')
+    }
+
+    const maxlinesgenerated = 20;
+
+    const svg = d3.select("body").append("svg")
+        .attr("style","background-color: black")
+        .attr("viewBox", [0, 0, width, height])
+        .property("value", {x:x})
+
+    const line = svg.append("polyline")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1)
+        .attr("points", polyline(dataf.map(x => x['y']),x,y));
+
+    const gx = svg.append("g")
+        .call(xAxis, x);
+
+    const gy = svg.append("g")
+        .call(yAxis, y);
+
+    svg.append("text")
+        .attr("transform","translate("+(plot.width/2)+","+(plot.height + 0.75*plot.margin.bottom)+")")
+        .attr("x", 60)
+        .attr("dy","-0.3em")
+        .style("text-anchor","middle")
+	    .attr("fill", "white")
+        .text("Frequency (" + units_freq + "Hz)");
+    
+    svg.append("text")
+        .attr("transform","translate("+(plot.width/2)+","+(plot.height + 0.75*plot.margin.bottom)+")")
+        .attr("y", -90)
+        .attr("x", -40)
+        .attr("dy", "1em")
+        .style("text-anchor","middle")
+        .attr("fill", "white")
+        .attr("transform", "translate(100, 100) rotate(-90)")
+        .text("Power Spectral Density (dB)");
+
+    var linescount = 0;
+
+    function draw() {
+      // console.log("here");
+      linescount++;
+      if (linescount > maxlinesgenerated) {
+        svg.select("polyline").remove();
+        linescount--;
+      }
+      //const data = dataf;
+      svg.selectAll("polyline").attr("points",function() { return changepos(d3.select(this).attr("points"));})
+      //console.log(linescount)
+      //console.log(d3.select(this).attr("points"))
+      svg.append("polyline")
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1)
+          .attr("points", polyline(dataf.map(x => x['y']),x,y));
+    }
+
+    // draw every second
+    setInterval(draw, 1000);
 }
