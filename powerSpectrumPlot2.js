@@ -87,7 +87,7 @@ function PowerSpectrumPlot(opts = {}) {
         .range([0, plot.width]);
 
     console.log(freq_plot_min * scale_freq, freq_plot_max * scale_freq);
-    
+
     // 6. Y scale will use the randomly generate number
     var pScale = d3.scaleLinear().domain([opts.yMin, opts.yMax]).range([plot.height, 0]);
 
@@ -214,7 +214,7 @@ function PowerSpectrumPlot(opts = {}) {
             clearInterval(t_interval);
             t_interval = setInterval(draw, d * 1000);
         });
-        
+
     var gSimple = d3
         .select('div#slider-simple')
         .append('svg')
@@ -237,7 +237,7 @@ function PowerSpectrumPlot(opts = {}) {
       .range([height - margin.bottom, margin.top])
     var xAxis = (g, x) => g
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x).tickFormat(x => (1780*(nfft-x)/nfft+1820*x/nfft).toFixed(0)))
     var yAxis = (g, y) => g
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y))
@@ -282,7 +282,7 @@ function PowerSpectrumPlot(opts = {}) {
         .style("text-anchor","middle")
 	    .attr("fill", "white")
         .text("Frequency (" + units_freq + "Hz)");
-    
+
     svg.append("text")
         .attr("transform","translate("+(plot.width/2)+","+(plot.height + 0.75*plot.margin.bottom)+")")
         .attr("y", -90)
