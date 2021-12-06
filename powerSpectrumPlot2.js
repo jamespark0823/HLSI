@@ -273,6 +273,7 @@ function PowerSpectrumPlot(opts = {}) {
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1)
+        .attr("style","opacity:1;")
         .attr("points", polyline(dataf.map(x => x['y']),x,y));
 
     const gx = svg.append("g")
@@ -310,12 +311,14 @@ function PowerSpectrumPlot(opts = {}) {
       }
       //const data = dataf;
       svg.selectAll("polyline").attr("points",function() { return changepos(d3.select(this).attr("points"));})
+                               .attr("style",function() { return "opacity:" + (parseFloat(d3.select(this).attr("style").split(":")[1].split(";")[0]) - 1/maxlinesgenerated) + ";"});
       //console.log(linescount)
       //console.log(d3.select(this).attr("points"))
       svg.append("polyline")
           .attr("fill", "none")
           .attr("stroke", "steelblue")
           .attr("stroke-width", 1)
+          .attr("style","opacity:1;")
           .attr("points", polyline(dataf.map(x => x['y']),x,y));
     }
 
