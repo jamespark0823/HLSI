@@ -217,7 +217,7 @@ function PowerSpectrumPlot(opts = {}) {
         .sliderBottom()
         .min(d3.min(data))
         .max(d3.max(data))
-        .width(300)
+        .width(600)
         .ticks(20)
         .step(0.1)
         .default(1)
@@ -229,7 +229,7 @@ function PowerSpectrumPlot(opts = {}) {
     var gSimple = d3
         .select('div#slider-simple')
         .append('svg')
-        .attr('width', 500)
+        .attr('width', 800)
         .attr('height', 100)
         .append('g')
         .attr('transform', 'translate(30,30)');
