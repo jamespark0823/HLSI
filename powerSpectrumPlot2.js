@@ -200,7 +200,7 @@ function PowerSpectrumPlot(opts = {}) {
     var height = 300
     var width = 750
     var x = d3.scaleLinear()
-      .domain([1780, 1820]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
+      .domain([0, nfft]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
       .range([margin.left, width - margin.right])
     var y = d3.scaleLinear()
       //.domain(d3.extent(dataf.map(x => x['y']))).nice()
