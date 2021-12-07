@@ -37,6 +37,8 @@ function PowerSpectrumPlot(opts = {}) {
     const svg = d3.select("body").append("svg")
         .attr("style","background-color: black")
         .attr("viewBox", [0, 0, width, height])
+        .attr("width",  plot.width  + plot.margin.left + plot.margin.right)
+        .attr("height", plot.height + plot.margin.top +  plot.margin.bottom)
         .property("value", {x:x})
     if(typeof(opts.yMax) === 'undefined')
         opts.yMax = 20;
