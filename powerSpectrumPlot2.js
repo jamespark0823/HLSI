@@ -271,7 +271,7 @@ function PowerSpectrumPlot(opts = {}) {
 
     const line = svg.append("polyline")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("class", "stroke-med no-fill stroke-yellow")
         .attr("stroke-width", 1)
         .attr("style","opacity:1;")
         .attr("points", polyline(dataf.map(x => x['y']),x,y));
@@ -311,12 +311,13 @@ function PowerSpectrumPlot(opts = {}) {
       }
       //const data = dataf;
       svg.selectAll("polyline").attr("points",function() { return changepos(d3.select(this).attr("points"));})
-                               .attr("style",function() { return "opacity:" + (parseFloat(d3.select(this).attr("style").split(":")[1].split(";")[0]) - 1/maxlinesgenerated) + ";"});
+                               .attr("style",function() { return "opacity:" + (parseFloat(d3.select(this).attr("style").split(":")[1].split(";")[0]) - 1/maxlinesgenerated) + "; stroke: steelblue;"});
       //console.log(linescount)
       //console.log(d3.select(this).attr("points"))
       svg.append("polyline")
           .attr("fill", "none")
-          .attr("stroke", "steelblue")
+        //   .attr("stroke", "steelblue")
+          .attr("class", "stroke-med no-fill stroke-yellow")
           .attr("stroke-width", 1)
           .attr("style","opacity:1;")
           .attr("points", polyline(dataf.map(x => x['y']),x,y));
