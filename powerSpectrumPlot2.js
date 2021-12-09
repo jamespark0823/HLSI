@@ -213,6 +213,7 @@ function PowerSpectrumPlot(opts = {}) {
     // update_plot() will be called by the callbacks that are set just
     // above.
 
+    // time slider
     var time = 1000;
     var data = [0.1, 2];
     var time_slider = d3
@@ -237,15 +238,61 @@ function PowerSpectrumPlot(opts = {}) {
         .attr('transform', 'translate(30,30)');
 
     gSimple.call(time_slider);
+    // time slider ends
 
-    // var margin = ({top: 50, right: 100, bottom: 40, left: 50})
-    // var height = 300
-    // var width = 750
-    // var x = d3.scaleLinear()
-    //   .domain([0, nfft]) //REPLACE THIS WITH A PROPER FREQUENCY VALUE
-    //   .range([margin.left, width - margin.right])
+    // x offset slider
+    var displace1 = 5
+    var data_x_offset = [1, 15];
+    var x_offset_slider = d3
+        .sliderBottom()
+        .min(d3.min(data_x_offset))
+        .max(d3.max(data_x_offset))
+        .width(600)
+        .ticks(15)
+        .step(1)
+        .default(5)
+        .on('onchange', function(d) {
+            displace1 = d;
+        });
+
+    var g_x_slider = d3
+        .select('div#slider-x-offset')
+        .append('svg')
+        .attr('width', 800)
+        .attr('height', 100)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+        g_x_slider.call(x_offset_slider);
+    // x offset slider ends
+
+    // y offset slider
+    var displace2 = -5
+    var data_y_offset = [-1, -15];
+    var y_offset_slider = d3
+        .sliderBottom()
+        .min(d3.min(data_y_offset))
+        .max(d3.max(data_y_offset))
+        .width(600)
+        .ticks(15)
+        .step(1)
+        .default(5)
+        .on('onchange', function(d) {
+            displace2 = d;
+        });
+
+    var g_y_slider = d3
+        .select('div#slider-y-offset')
+        .append('svg')
+        .attr('width', 800)
+        .attr('height', 100)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+        g_y_slider.call(y_offset_slider);
+    // y offset slider ends
+
     var y = d3.scaleLinear()
-      //.domain(d3.extent(dataf.map(x => x['y']))).nice()
       .domain([-60,20])
       .range([height - margin.bottom, margin.top])
     var xAxis = (g, x) => g
@@ -254,11 +301,10 @@ function PowerSpectrumPlot(opts = {}) {
     var yAxis = (g, y) => g
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y))
-    var polyline = (data,x,y) => data.map((d,i) => x(i) + ',' + y(d)).join(' ') //data.map is not a function
+    var polyline = (data,x,y) => data.map((d,i) => x(i) + ',' + y(d)).join(' ')
+
+    // giving offsets between current and historical graphs
     var changepos = (line) => {
-      //console.log(line);
-      const displace1 = 5;
-      const displace2 = -5;
       let arr = line.split(" ");
       for (let i = 0; i < arr.length; i++) {
         let nums = arr[i].split(",");
@@ -268,7 +314,8 @@ function PowerSpectrumPlot(opts = {}) {
       }
       return arr.join(' ')
     }
-
+    
+    // maximum number of lines presented in the vis
     const maxlinesgenerated = 20;
 
     const line = svg.append("polyline")
@@ -302,23 +349,22 @@ function PowerSpectrumPlot(opts = {}) {
         .attr("transform", "translate(100, 100) rotate(-90)")
         .text("Power Spectral Density (dB)");
 
+    
+    // tracking current number of line in the vis. can't surpass maxlinesgenerated
     var linescount = 0;
 
     function draw() {
-      // console.log("here");
       linescount++;
       if (linescount > maxlinesgenerated) {
         svg.select("polyline").remove();
         linescount--;
       }
-      //const data = dataf;
+
       svg.selectAll("polyline").attr("points",function() { return changepos(d3.select(this).attr("points"));})
                                .attr("style",function() { return "opacity:" + (parseFloat(d3.select(this).attr("style").split(":")[1].split(";")[0]) - 1/maxlinesgenerated) + "; stroke: steelblue;"});
-      //console.log(linescount)
-      //console.log(d3.select(this).attr("points"))
+
       svg.append("polyline")
           .attr("fill", "none")
-        //   .attr("stroke", "steelblue")
           .attr("class", "stroke-med no-fill stroke-yellow")
           .attr("stroke-width", 1)
           .attr("style","opacity:1;")
